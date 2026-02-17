@@ -1,50 +1,61 @@
 import streamlit as st
 import feedparser
 import urllib.parse
-from datetime import datetime
 
 # 5개 주 설정
 STATES = ["Georgia", "Alabama", "Tennessee", "South Carolina", "Florida"]
 
-st.set_page_config(page_title="2026 미 동남부 진출 기업 모니터", layout="wide")
-st.title("🏛️ 미 동남부 주 정부 공식 보도 및 최신 뉴스")
+st.set_page_config(page_title="2026 미 동남부 기업 모니터", layout="wide")
+st.title("📑 한국 기업 진출 및 투자 정밀 모니터링")
 
-def fetch_news(state):
-    # [전략 변경] 한국어/영어 모두 검색하되, 특정 주 정부 사이트와 'South Korea'를 결합
-    # site:gov 키워드로 공식 보도자료 우선 순위를 높임
-    query = f"{state} (South Korea OR Korean) (investment OR factory OR plant) when:30d"
+def fetch_precise_news(state):
+    # 정밀 쿼리: South Korea와 산업 키워드 결합
+    query = f'{state} "South Korea" (factory OR plant OR investment OR EV OR battery) when:30d'
     encoded_query = urllib.parse.quote(query)
-    
-    # 글로벌(영어) 검색 결과로 확장 (영문 보도자료가 더 빠르기 때문)
     url = f"https://news.google.com/rss/search?q={encoded_query}&hl=en-US&gl=US&ceid=US:en"
     
     feed = feedparser.parse(url)
-    return feed.entries[:10]
+    
+    seen_titles = set()
+    unique_news = []
+    
+    for entry in feed.entries:
+        # 제목에서 언론사명 제거 후 중복 체크
+        pure_title = entry.title.split(' - ')[0]
+        if pure_title not in seen_titles:
+            # 주요 키워드가 포함된 경우만 수집
+            keywords = ["korea", "hyundai", "lg", "sk", "samsung", "hanwha", "battery", "ev", "automotive"]
+            if any(kw in entry.title.lower() for kw in keywords):
+                unique_news.append(entry)
+                seen_titles.add(pure_title)
+                
+    return unique_news[:5] # 주당 5개씩만 노출
 
-# 대시보드 구성
+# 대시보드 화면 구성
 cols = st.columns(len(STATES))
 
 for i, state in enumerate(STATES):
     with cols[i]:
         st.subheader(f"📍 {state}")
-        try:
-            news_items = fetch_news(state)
-            if not news_items:
-                # 30일 내 뉴스가 없으면 기간 제한을 풀어 6개월치 시도
-                alt_query = urllib.parse.quote(f"{state} South Korea investment")
-                alt_url = f"https://news.google.com/rss/search?q={alt_query}&hl=en-US&gl=US&ceid=US:en"
-                news_items = feedparser.parse(alt_url).entries[:5]
-                st.info("최근 30일 내 소식이 없어 이전 소식을 표시합니다.")
-
-            for entry in news_items:
-                with st.expander(f"{entry.title[:45]}..."):
-                    st.write(f"**{entry.title}**")
-                    st.caption(f"출처: {entry.source.title} | 날짜: {entry.published}")
-                    st.markdown(f"[기사 원문 보기]({entry.link})")
-        except Exception as e:
-            st.error("뉴스 데이터를 불러올 수 없습니다.")
-
-st.sidebar.markdown("### 🔗 주요 주 정부 뉴스룸 바로가기")
-st.sidebar.page_link("https://www.georgia.org/newsroom", label="Georgia Newsroom", icon="🍑")
-st.sidebar.page_link("https://www.madeinalabama.com/news/", label="Alabama News", icon="🐘")
-st.sidebar.page_link("https://tnecd.com/news/", label="Tennessee News", icon="🎸")
+        news_items = fetch_precise_news(state)
+        
+        if not news_items:
+            st.write("새로운 기업 소식이 없습니다.")
+        
+        for entry in news_items:
+            with st.container(border=True):
+                # 제목 클릭 시 원문 이동
+                st.markdown(f"**[{entry.source.title}]**")
+                st.markdown(f"#### [{entry.title.split(' - ')[0]}]({entry.link})")
+                
+                # 기사 요약(미리보기) 부분
+                # RSS에서 제공하는 summary/description을 활용합니다.
+                if 'summary' in entry:
+                    # HTML 태그 제거 및 간단한 요약 노출
+                    summary_text = entry.summary.split('<')[0] # 단순 텍스트만 추출
+                    if len(summary_text) > 10:
+                        st.write(f"📝 {summary_text[:150]}...")
+                    else:
+                        st.write("📝 본문 요약 내용은 원문을 참조하세요.")
+                
+                st.caption(f"📅 {entry.published[:16]}")
