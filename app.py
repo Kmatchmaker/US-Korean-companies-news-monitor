@@ -1,68 +1,67 @@
 import streamlit as st
 import feedparser
 import urllib.parse
-from datetime import datetime
 
-# 설정: 5개 주
-STATES = ["Georgia", "Alabama", "Tennessee", "South Carolina", "Florida"]
+# 설정: 주 이름 매핑 (한국어 검색용)
+STATE_MAP = {
+    "Georgia": "조지아",
+    "Alabama": "앨라배마",
+    "Tennessee": "테네시",
+    "South Carolina": "사우스캐롤라이나",
+    "Florida": "플로리다"
+}
 
-st.set_page_config(page_title="2026 미 동남부 기업 투자 모니터", layout="wide")
-st.title("📊 미 동남부 한국 기업 진출 실시간 보드 (2026)")
+st.set_page_config(page_title="2026 미 동남부 기업 모니터", layout="wide")
 
 # --- 뉴스 수집 함수 ---
-def fetch_news(query, lang="en-US", gl="US"):
-    # 2026년 최신성 보장을 위해 when:30d 필터 유지
+def fetch_news(query, lang, gl):
     encoded_query = urllib.parse.quote(f"{query} when:30d")
     url = f"https://news.google.com/rss/search?q={encoded_query}&hl={lang}&gl={gl}&ceid={gl}:{lang}"
     feed = feedparser.parse(url)
-    # 발행 시간순 정렬
-    entries = sorted(feed.entries, key=lambda x: x.get('published_parsed', (0,0,0,0,0,0,0,0,0)), reverse=True)
-    return entries
+    return sorted(feed.entries, key=lambda x: x.get('published_parsed', (0,0,0,0,0,0,0,0,0)), reverse=True)
 
-# --- 화면 레이아웃 (Tabs) ---
-tab_us, tab_kr = st.tabs(["🇺🇸 미국 현지 뉴스 (US Media & Gov)", "🇰🇷 한국 언론 보도 (Korean Media)"])
+# ==========================================================
+# 🇺🇸 SECTION 1: 미국 현지 뉴스 보드 (US Official News)
+# ==========================================================
+st.title("🇺🇸 미국 현지 오피셜 보도")
+st.markdown("##### 주 정부 및 현지 경제지에서 보도한 영문 기사")
 
-# --- TAB 1: 미국 현지 보도 (필터 수정 완료) ---
-with tab_us:
-    st.info("💡 미국 현지 매체가 보도한 '한국 기업'의 진출 및 투자 뉴스입니다.")
-    cols = st.columns(len(STATES))
-    for i, state in enumerate(STATES):
-        with cols[i]:
-            st.header(f"📍 {state}")
-            # [수정] 주 이름과 'South Korea'를 필수 결합하고 비즈니스 키워드 추가
-            # 단순 주 정부 사이트 검색을 넘어 현지 경제지도 포함하도록 확장
-            query = f'"{state}" "South Korea" (investment OR factory OR plant OR jobs)'
-            news_items = fetch_news(query, lang="en-US", gl="US")
-            
-            if not news_items:
-                st.write("해당 주의 신규 기업 뉴스가 없습니다.")
-            
-            for entry in news_items[:8]:
-                with st.container(border=True):
-                    # 제목에서 주 이름이 있는지 재검증하여 데이터 섞임 방지
-                    if state.lower() in entry.title.lower() or state.lower().replace(" ", "") in entry.link.lower():
-                        st.caption(f"📅 {entry.published[:16]} | {entry.source.title}")
-                        st.markdown(f"**[{entry.title.split(' - ')[0]}]({entry.link})**")
-                        if 'summary' in entry:
-                            st.write(f"📝 {entry.summary.split('<')[0][:120]}...")
+cols_us = st.columns(len(STATE_MAP))
+for i, (en_name, ko_name) in enumerate(STATE_MAP.items()):
+    with cols_us[i]:
+        st.info(f"📍 {en_name}")
+        # 미국 뉴스는 영어로 검색
+        query_us = f'"{en_name}" "South Korea" (investment OR factory OR plant)'
+        items = fetch_news(query_us, "en-US", "US")
+        
+        if not items:
+            st.write("최신 현지 뉴스가 없습니다.")
+        for entry in items[:6]:
+            with st.container(border=True):
+                st.caption(f"📅 {entry.published[:16]}")
+                st.markdown(f"**[{entry.title.split(' - ')[0]}]({entry.link})**")
+                st.caption(f"출처: {entry.source.title}")
 
-# --- TAB 2: 한국 언론 보도 ---
-with tab_kr:
-    st.success("💡 한국 내 언론사가 보도한 미국 현지 진출 소식입니다.")
-    cols = st.columns(len(STATES))
-    for i, state in enumerate(STATES):
-        with cols[i]:
-            st.header(f"📍 {state}")
-            # 한국어 키워드 정밀화
-            query = f'"{state}" "한국 기업" (투자 OR 진출 OR 공장 OR 채용)'
-            news_items = fetch_news(query, lang="ko", gl="KR")
-            
-            if not news_items:
-                st.write("관련 보도가 없습니다.")
-            
-            for entry in news_items[:8]:
-                with st.container(border=True):
-                    st.caption(f"📅 {entry.published[:16]} | {entry.source.title}")
-                    st.markdown(f"**[{entry.title.split(' - ')[0]}]({entry.link})**")
-                    if 'summary' in entry:
-                        st.write(f"📝 {entry.summary.split('<')[0][:120]}...")
+st.divider() # 보드 구분을 위한 굵은 선
+
+# ==========================================================
+# 🇰🇷 SECTION 2: 한국 언론 보도 보드 (Korean Media News)
+# ==========================================================
+st.title("🇰🇷 한국 언론 보도")
+st.markdown("##### 국내 주요 일간지 및 경제지에서 보도한 진출 소식")
+
+cols_kr = st.columns(len(STATE_MAP))
+for i, (en_name, ko_name) in enumerate(STATE_MAP.items()):
+    with cols_kr[i]:
+        st.success(f"📍 {ko_name}")
+        # [핵심 수정] 한국어 지명으로 검색하여 정확도 상향
+        query_kr = f'{ko_name} "미국" (투자 OR 진출 OR 공장)'
+        items = fetch_news(query_kr, "ko", "KR")
+        
+        if not items:
+            st.write("관련 한국 보도가 없습니다.")
+        for entry in items[:6]:
+            with st.container(border=True):
+                st.caption(f"📅 {entry.published[:16]}")
+                st.markdown(f"**[{entry.title.split(' - ')[0]}]({entry.link})**")
+                st.caption(f"출처: {entry.source.title}")
