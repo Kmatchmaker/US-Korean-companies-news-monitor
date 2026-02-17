@@ -2,37 +2,48 @@ import streamlit as st
 import feedparser
 import urllib.parse
 
-st.set_page_config(page_title="2026 韓 기업 미국 진출 보드", layout="wide")
-st.title("🚜 2026년 2월 미 동남부 한국 기업 진출·투자 정밀 보드")
+st.set_page_config(page_title="2026 韓 기업 미국 투자 보드", layout="wide")
+st.title("🏭 2026년 2월 한국 기업 미국 진출·수주 정밀 보드")
 
-# 핵심 타겟 주
-STATES = {"Georgia": "조지아", "Alabama": "앨라배마", "Tennessee": "테네시"}
+# 1. 사용자님이 알고자 하는 핵심 타겟 기업 및 주
+TARGETS = {
+    "Georgia": "조지아 (동원오토, 덕신EPC)",
+    "Alabama": "앨라배마 (지엠비코리아, 현대일렉)",
+    "Tennessee": "테네시 (효성, LG엔솔, 한국타이어)"
+}
 
-def fetch_top_news(query, gl):
-    # 날짜 필터와 핵심 키워드(투자, 수주, 증설) 결합
-    full_query = f'{query} (investment OR expansion OR contract) after:2026-02-01'
+def fetch_latest_biz_news(query, gl):
+    # 날짜 필터를 빼고 '2026' 키워드를 쿼리에 직접 넣는 것이 더 확실합니다.
+    full_query = f'{query} 2026 (투자 OR 출자 OR 수주 OR 공장 OR investment)'
     encoded_query = urllib.parse.quote(full_query)
     url = f"https://news.google.com/rss/search?q={encoded_query}&hl=ko&gl={gl}&ceid={gl}:ko"
     
     feed = feedparser.parse(url)
-    return [e for e in feed.entries if "2026" in e.published][:5]
+    # 제목에 '구금'이나 '수사'가 들어간 노이즈는 코드에서 제외
+    noise = ["구금", "수사", "레이드", "arrest", "raid"]
+    return [e for e in feed.entries if not any(w in e.title.lower() for w in noise)][:5]
 
-tab_us, tab_kr = st.tabs(["🇺🇸 미국 현지 오피셜 뉴스", "🇰🇷 한국 언론 & 공시"])
+tab_us, tab_kr = st.tabs(["🇺🇸 미국 현지 뉴스 (Gov & Biz)", "🇰🇷 한국 언론 & 공시"])
 
 with tab_us:
-    for en, ko in STATES.items():
-        st.subheader(f"📍 {en} ({ko})")
-        # 주정부 사이트(.gov) 직접 검색
-        gov_items = fetch_top_news(f'site:.gov "{en}" "South Korea"', "US")
-        for e in gov_items:
-            st.success(f"**[GOV] [{e.title}]({e.link})**")
+    for en, display in TARGETS.items():
+        st.subheader(f"📍 {display}")
+        # 미국 현지 소스 검색 (gl=US)
+        items = fetch_latest_biz_news(f'"{en}" "South Korea"', "US")
+        if not items: st.write("최신 오피셜 뉴스 대기 중")
+        for e in items:
+            # 주정부 발표(.gov)는 강조 표시
+            style = "success" if ".gov" in e.link else "info"
+            getattr(st, style)(f"**[{e.title}]({e.link})**")
             st.caption(f"📅 {e.published}")
 
 with tab_kr:
-    for en, ko in STATES.items():
-        st.subheader(f"📍 {ko} ({en})")
-        # 한국 주요 경제지 검색
-        kr_items = fetch_top_news(f'{ko} ("투자" OR "출자" OR "수주" OR "증설")', "KR")
-        for e in kr_items:
-            st.info(f"**[{e.title}]({e.link})**")
-            st.caption(f"📅 {e.published} | {e.source.title}")
+    for en, display in TARGETS.items():
+        ko_state = display.split(" ")[0]
+        st.subheader(f"📍 {ko_state}")
+        # 한국 언론 소스 검색 (gl=KR)
+        items = fetch_latest_biz_news(ko_state, "KR")
+        for e in items:
+            with st.container(border=True):
+                st.markdown(f"**[{e.title}]({e.link})**")
+                st.caption(f"📅 {e.published} | {e.source.title}")
