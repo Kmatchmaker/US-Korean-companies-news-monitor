@@ -7,17 +7,13 @@ st.info("2026.02.17 기준, 현지 지역지(AJC, AL.com 등) 및 주요 경제�
 
 # [데이터셋] 신규 추가된 4개사 포함 총 10개 핵심 기업 데이터
 # 2026.02.17 최종 업데이트 데이터
+# 2026.02.17 기준 최근 1개월 내(2026.01.17 이후) 소스만 포함
 data = [
-    ["Georgia", "한화큐셀", "02/16", "$2.5B (3조)", "카터스빌 솔라허브 본격 가동 및 통합 공급망 현지화 완료.", "https://www.ajc.com/news/business/qcells-begins-producing-solar-panels-at-new-georgia-plant-in-cartersville/LA2MDGKHRFEK3GHQRBQ7YAB26E/"],
-    ["Alabama", "현대차", "02/11", "로봇 투입", "휴머노이드 로봇 '아틀라스' 몽고메리 공장 실습 투입 및 지능화.", "https://www.youtube.com/watch?v=5IUbN9UbOz0"],
-    ["Tennessee", "LG엔솔", "02/12", "LFP 양산", "스프링힐 공장 LFP 배터리 전용 라인 가동 및 AI 데이터센터 수요 대응.", "https://www.batterytechonline.com/battery-manufacturing/lg-energy-solution-opens-first-us-large-scale-lfp-battery-plant-for-energy-storage"],
-    ["Georgia", "SK온", "02/14", "고용 3천명", "SKBA 고용 목표 조기 달성 및 현지 생산 전문 인력 대거 확충.", "https://georgia.org/press-release/sk-battery-america-exceeds-hiring-goal-track-reach-3000-workers"],
-    ["Tennessee", "고려아연", "01/25", "$7.4B (11조)", "테네시 클락스빌 제련소 인수 후 2026년 광물 자원 공급망 강화.", "https://www.g-enews.com/article/Global-Biz/2026/01/2026012508393543110c8c1c064d_1"],
-    ["Tennessee", "효성중공업", "02/10", "7,870억 원", "미국 진출 역대 최대 규모 초고압 변압기 수주 달성.", "https://www.donga.com/news/Economy/article/all/20260210/133334089/1"],
-    ["Arizona", "덕신EPC", "02/11", "7만㎡ 규모", "미국 최대 반도체 후공정 앰코(Amkor) 공장 데크플레이트 수주.", "https://www.hankyung.com/article/202602118334i"],
-    ["Georgia", "동원금속", "02/05", "$30M (440억)", "조지아 제2공장 신설 확정. 주지사 공식 발표 및 고용 창출.", "https://www.yna.co.kr/view/AKR20260206003200009"],
-    ["Alabama", "HD현대일렉트릭", "02/10", "시설 확충", "앨라배마 법인 증설 및 전력기기 시장 호황 선제 대응.", "https://www.mt.co.kr/view/2025022413501597250"],
-    ["Alabama", "지엠비코리아", "02/12", "46.5억 원", "현대차 전동화 부품 생산 대응을 위한 현지 법인 자금 수혈.", "https://www.digitaltoday.co.kr/news/articleView.html?idxno=630782"]
+    ["Tennessee", "효성중공업", "02/10", "7,870억 원", "미국 시장 진출 후 최대 규모 초고압 변압기 단일 계약 수주.", "https://www.donga.com/news/Economy/article/all/20260210/133334089/1"],
+    ["Arizona", "덕신EPC", "02/11", "7만㎡ 규모", "앰코(Amkor) 애리조나 반도체 공장 건설용 데크플레이트 수주 성공.", "https://www.hankyung.com/article/202602118334i"],
+    ["Georgia", "동원금속", "02/05", "$30M (440억)", "조지아 이매뉴얼 카운티 제2공장 신설 확정. 주지사실 공식 발표.", "https://www.yna.co.kr/view/AKR20260206003200009"],
+    ["Alabama", "지엠비코리아", "02/12", "46.5억 원", "현대차 전동화 부품 대응을 위한 앨라배마 현지 법인 자본금 증자.", "https://www.digitaltoday.co.kr/news/articleView.html?idxno=630782"],
+    ["Tennessee", "고려아연", "01/25", "$7.4B (11조)", "테네시 클락스빌 제련소 인수지 내 전략 광물 자원 가치 확인.", "https://www.g-enews.com/article/Global-Biz/2026/01/2026012508393543110c8c1c064d_1"]
 ]
 
 # [로직] 대기업 우선순위(👑) 부여 및 정렬
