@@ -17,7 +17,6 @@ data = [
     ["Alabama", "👑 현대자동차", "2026-02-11", "로봇 실무", "몽고메리 공장 휴머노이드 '아틀라스' 실무 투입 및 테스트.", "https://www.youtube.com/watch?v=5IUbN9UbOz0"],
     ["Georgia", "👑 SK온", "2026-02-08", "라인 전환", "조지아 공장 LFP 배터리 라인 개조 완료 및 ESS 공급 준비.", "https://www.skon.com/news"],
     ["Tennessee", "👑 LG에너지솔루션", "2026-02-12", "LFP 양산", "테네시 스프링힐 공장 LFP 배터리 전용 라인 가동 및 공급 개시.", "https://www.batterytechonline.com/battery-manufacturing/lg-energy-solution-opens-first-us-large-scale-lfp-battery-plant-for-energy-storage"],
-    ["Georgia", "💎 신성유화", "2026-02-01", "협력사 가동", "현대차 메타플랜트 협력사로 조지아 생산 시설 가동 및 공급 개시.", "https://higoodday.com/news/1000425"],
     ["Alabama", "👑 HD현대일렉트릭", "2026-02-10", "수주 호황", "북미 전력망 교체 수요 폭증으로 앨라배마 공장 수주 잔고 급증.", "https://www.mt.co.kr/view/2025022413501597250"]
 ]
 
