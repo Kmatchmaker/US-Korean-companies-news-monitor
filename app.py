@@ -16,7 +16,6 @@ data = [
     ["Georgia", "동원금속", "02/05", "$30M (440억)", "조지아 이매뉴얼 카운티 제2공장 신설 확정 (주지사 발표).", "https://www.yna.co.kr/view/AKR20260206003200009"],
     ["Tennessee", "고려아연", "01/25", "$7.4B (11조)", "테네시 클락스빌 제련소 인수지 내 전략 광물 자원 가치 확인.", "https://www.g-enews.com/article/Global-Biz/2026/01/2026012508393543110c8c1c064d_1"],
     ["Alabama", "현대차", "02/11", "로봇 실습", "휴머노이드 로봇 '아틀라스' 몽고메리 공장 실무 투입.", "https://www.youtube.com/watch?v=5IUbN9UbOz0"],
-    ["Georgia", "SK온", "02/14", "고용 3천명", "SKBA 고용 목표 조기 달성 및 지역 경제 기여 공식 발표.", "https://georgia.org/press-release/sk-battery-america-exceeds-hiring-goal-track-reach-3000-workers"],
     ["Alabama", "HD현대일렉트릭", "02/10", "시설 확충", "앨라배마 법인 증설 및 북미 전력 시장 호황 선제 대응.", "https://www.mt.co.kr/view/2025022413501597250"],
     ["Tennessee", "LG엔솔", "02/12", "LFP 양산", "스프링힐 공장 LFP 배터리 전용 라인 가동 및 공급 개시.", "https://www.batterytechonline.com/battery-manufacturing/lg-energy-solution-opens-first-us-large-scale-lfp-battery-plant-for-energy-storage"],
     ["Georgia", "한화큐셀", "01/08", "공급망 차질", "조지아 공장 일부 인력 대상 휴직 및 생산 속도 조절 이슈.", "https://www.worldenergynews.com/news/qcells-furloughs-1000-workers/"]
